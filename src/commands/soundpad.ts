@@ -7,11 +7,14 @@ export default class {
 
 	private audio: string | number;
 
+	private volume: string | number;
+
 	private audiosPath = "D:\\Soundpad\\.Sons";
 
-	constructor(context: Discord.Message, audio: string | number) {
+	constructor(context: Discord.Message, audio: string | number, volume: string | number = 0) {
 		this.ctx = context;
 		this.audio = audio;
+		this.volume = volume;
 		if (audio === "list") {
 			this.listAvailableAudios();
 		} else if (audio) {
@@ -40,12 +43,19 @@ export default class {
 	}
 
 	private async playAudio() {
-		const connection = await this.ctx.guild.member(this.ctx.author).voice.channel.join();
-		const playing = connection.play(
-			path.join(this.audiosPath, fs.readdirSync(this.audiosPath)[Number(this.audio)])
-		);
-		playing.on("finish", () => {
-			connection.channel.leave();
-		});
+		try {
+			const connection = await this.ctx.guild.member(this.ctx.author).voice.channel.join();
+			const playing = connection.play(
+				path.join(this.audiosPath, fs.readdirSync(this.audiosPath)[Number(this.audio)])
+			);
+			if (!(this.volume === 0 || this.volume === "0")) {
+				playing.setVolume(Number(this.volume));
+			}
+			playing.on("finish", () => {
+				connection.channel.leave();
+			});
+		} catch (err) {
+			return this.ctx.channel.send(`Não consegui tocar o áudio 🙁. Avise a vagabunda desse erro: ${err}`);
+		}
 	}
 }

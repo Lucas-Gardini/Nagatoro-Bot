@@ -52,7 +52,9 @@
 	},
 	"dependencies": {
 		"@discordjs/opus": "^0.5.3",
+		"axios": "^0.21.1",
 		"discord.js": "^12.5.3",
+		"g-i-s": "^2.1.6",
 		"ora": "^5.4.1"
 	}
 }

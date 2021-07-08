@@ -24,17 +24,31 @@ export default class {
 	}
 
 	private async Ban() {
-		const { channel } = this.ctx.guild.member(this.userId).voice;
+		try {
+			const { channel } = this.ctx.guild.member(this.userId).voice;
 
-		const connection = await channel.join();
+			const connection = await channel.join();
 
-		const playing = await connection.play(path.join(__dirname, "../resources/banido.mp3"));
-		playing.on("finish", async () => {
-			await this.ctx.guild.member(this.userId).voice.setChannel(null);
-			await connection.disconnect();
-		});
-
-		return this.ctx.channel.send(`Ednaldo Pereira está banindo: ${this.user}`);
+			await this.ctx.channel.send(`Criando grupo no WhatsApp... 📱`);
+			setTimeout(async () => {
+				await this.ctx.channel.send(`Adicionando ${this.user} no grupo... 📲`);
+				setTimeout(async () => {
+					await this.ctx.channel.send(
+						`Alterando o título do grupo para: ${this.user} - Saia do canal ${channel.name}`
+					);
+					const playing = await connection.play(path.join(__dirname, "../resources/banido.mp4"));
+					setTimeout(async () => {
+						await this.ctx.guild.member(this.userId).voice.setChannel(null);
+					}, 2200);
+					playing.on("finish", async () => {
+						await this.ctx.channel.send("Saindo do grupo.. 📴");
+						await connection.disconnect();
+					});
+				}, 800);
+			}, 700);
+		} catch (err) {
+			return this.ctx.channel.send(`Não consegui realizar esta ação. Avise a vagabunda desse erro: ${err}`);
+		}
 	}
 
 	private async UltraBan() {
@@ -59,11 +73,11 @@ export default class {
 			if (canContinue) {
 				playing = await connection.play(path.join(__dirname, "../resources/banidodesbanido.mp3"));
 			} else {
-				playing = await connection.play(path.join(__dirname, "../resources/mencionaocanal.mp3"));
-				playing.setVolume(500);
-				playing.on("finish", () => {
-					connection.disconnect();
-				});
+				// playing = await connection.play(path.join(__dirname, "../resources/mencionaocanal.mp3"));
+				// playing.setVolume(500);
+				// playing.on("finish", () => {
+				// 	connection.disconnect();
+				// });
 				return;
 			}
 
